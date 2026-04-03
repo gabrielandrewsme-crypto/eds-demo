@@ -492,7 +492,7 @@ function hydrateOperations(record) {
       return;
     }
 
-    await runWithLoading("Salvando estoque de abertura", async () => {
+    await runWithLoading("Salvando pacotes de abertura", async () => {
       await upsertCurrentShift({
         opening_stock: {
           pipoca: Number(openingForm.pipoca.value),
@@ -502,7 +502,7 @@ function hydrateOperations(record) {
       });
       await refreshCurrentRecord();
     });
-    showToast("Estoque de abertura salvo.");
+    showToast("Pacotes de abertura salvos.");
   });
 
   shortageForm.addEventListener("submit", async (event) => {
@@ -546,7 +546,7 @@ function hydrateOperations(record) {
       return;
     }
     if (!hasOpeningStock(record)) {
-      showToast("Salve primeiro o estoque de abertura antes do fechamento.");
+      showToast("Salve primeiro os pacotes de abertura antes do fechamento.");
       return;
     }
 
@@ -599,7 +599,7 @@ function hydrateOperations(record) {
       return;
     }
     if (!hasOpeningStock(record)) {
-      showToast("Preencha o estoque de abertura antes do check-out.");
+      showToast("Preencha os pacotes de abertura antes do check-out.");
       return;
     }
     if (!record.closing) {

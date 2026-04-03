@@ -26,7 +26,7 @@
           <p class="nav-title">Geral</p>
           <a class="nav-link active" href="#">Overview</a>
           <a class="nav-link" href="#">Ponto Eletronico</a>
-          <a class="nav-link" href="#">Estoque</a>
+          <a class="nav-link" href="#">Pacotes</a>
           <a class="nav-link" href="#">Financeiro</a>
           <a class="nav-link" href="#">Auditoria</a>
         </nav>
@@ -62,7 +62,7 @@
           <div class="mini-metrics">
             <div class="metric-card soft">
               <span>Fluxo</span>
-              <strong>Ponto, estoque e caixa</strong>
+              <strong>Ponto, pacotes e caixa</strong>
             </div>
             <div class="metric-card soft">
               <span>Modelo</span>
@@ -187,22 +187,22 @@
       <div class="panel">
         <div class="panel-header">
           <p class="section-tag">Abertura</p>
-          <h2>Estoque inicial</h2>
+          <h2>Pacotes iniciais</h2>
         </div>
         <form id="opening-stock-form" class="form-grid three-columns">
           <label>
-            Pipoca
+            Pacotes de Pipoca
             <input name="pipoca" type="number" min="0" step="1" required />
           </label>
           <label>
-            Pele
+            Pacotes de Pele
             <input name="pele" type="number" min="0" step="1" required />
           </label>
           <label>
-            Batata Chips
+            Pacotes de Batata Chips
             <input name="batataChips" type="number" min="0" step="1" required />
           </label>
-          <button class="btn btn-primary" type="submit">Salvar estoque de abertura</button>
+          <button class="btn btn-primary" type="submit">Salvar pacotes de abertura</button>
         </form>
       </div>
 
@@ -234,20 +234,20 @@
       <div class="panel">
         <div class="panel-header">
           <p class="section-tag">Fechamento</p>
-          <h2>Caixa e estoque final</h2>
+          <h2>Caixa e pacotes finais</h2>
         </div>
         <form id="closing-form" class="form-grid">
           <div class="subsection-grid three-columns">
             <label>
-              Estoque final Pipoca
+              Pacotes finais de Pipoca
               <input name="finalPipoca" type="number" min="0" step="1" required />
             </label>
             <label>
-              Estoque final Pele
+              Pacotes finais de Pele
               <input name="finalPele" type="number" min="0" step="1" required />
             </label>
             <label>
-              Estoque final Batata Chips
+              Pacotes finais de Batata Chips
               <input name="finalBatataChips" type="number" min="0" step="1" required />
             </label>
           </div>
@@ -438,7 +438,7 @@
           <h2>Fluxo operacional aguardando ponto</h2>
         </div>
         <p>
-          Registre primeiro o start de ponto para liberar estoque, ocorrencias e fechamento.
+          Registre primeiro o start de ponto para liberar pacotes, ocorrencias e fechamento.
         </p>
       </div>
     </template>
