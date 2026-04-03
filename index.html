@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDS System</title>
+    <meta name="theme-color" content="#1f6f63" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="icon" type="image/png" sizes="2000x2000" href="/eds.png" />
+    <link rel="apple-touch-icon" href="/eds.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell-layout">
+      <aside class="sidebar">
+        <div class="brand-mark">
+          <img class="brand-avatar" src="/eds.png" alt="Logo EDS System" />
+          <div>
+            <p class="eyebrow">Explosao de Sabor</p>
+            <h1>EDS System</h1>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <p class="nav-title">Geral</p>
+          <a class="nav-link active" href="#">Overview</a>
+          <a class="nav-link" href="#">Ponto Eletronico</a>
+          <a class="nav-link" href="#">Estoque</a>
+          <a class="nav-link" href="#">Financeiro</a>
+          <a class="nav-link" href="#">Auditoria</a>
+        </nav>
+        <div class="sidebar-card">
+          <span>Unidades</span>
+          <strong>Nova Iguacu, Belford Roxo, Heliopolis, Miguel Couto, Posse e Vila de Cava</strong>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar-actions">
+            <button class="icon-chip" type="button">Ponto</button>
+            <button class="icon-chip" type="button">Caixa</button>
+            <button class="icon-chip" type="button">ADM</button>
+          </div>
+          <div class="search-shell">Controle operacional das barracas</div>
+        </header>
+
+        <main id="app"></main>
+      </div>
+    </div>
+
+    <template id="login-template">
+      <section class="content-grid auth-grid">
+        <article class="panel intro-panel">
+          <div class="panel-header stacked">
+            <div>
+              <p class="section-tag">Overview</p>
+              <h2>Controle central das barracas</h2>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div class="metric-card soft">
+              <span>Fluxo</span>
+              <strong>Ponto, estoque e caixa</strong>
+            </div>
+            <div class="metric-card soft">
+              <span>Modelo</span>
+              <strong>Uso rapido no celular</strong>
+            </div>
+          </div>
+          <p class="hero-copy">
+            Entrada unica para operacao da unidade e acesso administrativo com auditoria
+            financeira, fotos da maquininha e controle de horario.
+          </p>
+        </article>
+        <section class="panel login-panel">
+          <div class="panel-header stacked">
+            <div>
+              <p class="section-tag">Acesso</p>
+              <h2>Login unificado</h2>
+            </div>
+          </div>
+          <form id="login-form" class="form-grid">
+            <label>
+              Usuario
+              <input name="username" type="text" autocomplete="username" required />
+            </label>
+            <label>
+              Senha
+              <input name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <button class="btn btn-primary btn-xl" type="submit">Entrar no sistema</button>
+          </form>
+          <div class="login-actions">
+            <button id="login-admin-button" class="btn btn-secondary btn-xl" type="button">
+              Entrar no Painel ADM
+            </button>
+          </div>
+          <p class="hint">Acesso operacional por unidade e acesso administrativo direto na mesma tela.</p>
+        </section>
+      </section>
+    </template>
+
+    <template id="unit-template">
+      <section class="content-grid compact-grid">
+        <article class="panel calendar-card">
+          <div class="panel-header stacked">
+            <div>
+              <p class="section-tag">Hoje</p>
+              <h2>Selecionar unidade</h2>
+            </div>
+          </div>
+          <div class="calendar-tile">
+            <strong id="today-day">--</strong>
+            <span id="today-date-label">--</span>
+          </div>
+        </article>
+        <section class="panel">
+          <div class="panel-header stacked">
+            <div>
+              <p class="section-tag">Passo 1</p>
+              <h2>Escolha onde esta operando</h2>
+            </div>
+          </div>
+          <form id="unit-form" class="form-grid">
+            <label>
+              Unidade
+              <select name="unit" required></select>
+            </label>
+            <button class="btn btn-primary btn-xl" type="submit">Confirmar unidade</button>
+          </form>
+        </section>
+      </section>
+    </template>
+
+    <template id="dashboard-template">
+      <section class="content-grid dashboard-grid">
+        <aside class="panel side-panel clean-side-panel">
+          <div class="panel-header">
+            <p class="section-tag">Sessao</p>
+            <h2 id="session-unit"></h2>
+          </div>
+          <div class="status-stack">
+            <div class="status-card warm">
+              <span>Ponto de abertura</span>
+              <strong id="start-status">Pendente</strong>
+            </div>
+            <div class="status-card">
+              <span>Abertura registrada</span>
+              <strong id="start-time">--</strong>
+            </div>
+            <div class="status-card">
+              <span>Fechamento registrado</span>
+              <strong id="end-time">--</strong>
+            </div>
+          </div>
+          <button id="admin-access" class="btn btn-secondary btn-xl" type="button">Painel ADM</button>
+          <button id="logout-button" class="btn btn-ghost" type="button">Sair</button>
+        </aside>
+
+        <section class="main-stack">
+          <section class="panel summary-panel">
+            <div class="panel-header">
+              <p class="section-tag">Passo 2</p>
+              <h2>Abrir barraca</h2>
+            </div>
+            <p class="highlight-copy">
+              O acesso aos formularios operacionais so e liberado depois do start de ponto.
+            </p>
+            <button id="start-shift" class="btn btn-accent btn-kiosk" type="button">
+              Abrir Barraca (Start de Ponto)
+            </button>
+          </section>
+
+          <section id="operations-wrapper" class="operations-wrapper locked"></section>
+        </section>
+      </section>
+    </template>
+
+    <template id="operations-template">
+      <div class="card-grid two-up">
+      <div class="panel">
+        <div class="panel-header">
+          <p class="section-tag">Abertura</p>
+          <h2>Estoque inicial</h2>
+        </div>
+        <form id="opening-stock-form" class="form-grid three-columns">
+          <label>
+            Pipoca
+            <input name="pipoca" type="number" min="0" step="1" required />
+          </label>
+          <label>
+            Pele
+            <input name="pele" type="number" min="0" step="1" required />
+          </label>
+          <label>
+            Batata Chips
+            <input name="batataChips" type="number" min="0" step="1" required />
+          </label>
+          <button class="btn btn-primary" type="submit">Salvar estoque de abertura</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <p class="section-tag">Ocorrencias</p>
+          <h2>Faltas e reposicao</h2>
+        </div>
+        <div class="split-grid">
+          <form id="shortage-form" class="form-grid">
+            <label>
+              Item em falta
+              <input name="item" type="text" required />
+            </label>
+            <button class="btn btn-secondary" type="submit">Sinalizar falta</button>
+          </form>
+          <form id="restock-form" class="form-grid">
+            <label>
+              Pedido de reposicao
+              <textarea name="description" rows="3" required></textarea>
+            </label>
+            <button class="btn btn-secondary" type="submit">Registrar pedido</button>
+          </form>
+        </div>
+        <div id="incidents-list" class="list-board"></div>
+      </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <p class="section-tag">Fechamento</p>
+          <h2>Caixa e estoque final</h2>
+        </div>
+        <form id="closing-form" class="form-grid">
+          <div class="subsection-grid three-columns">
+            <label>
+              Estoque final Pipoca
+              <input name="finalPipoca" type="number" min="0" step="1" required />
+            </label>
+            <label>
+              Estoque final Pele
+              <input name="finalPele" type="number" min="0" step="1" required />
+            </label>
+            <label>
+              Estoque final Batata Chips
+              <input name="finalBatataChips" type="number" min="0" step="1" required />
+            </label>
+          </div>
+          <div class="subsection-grid two-columns">
+            <label>
+              Entradas em dinheiro (R$)
+              <input name="cash" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              Entradas em cartao (R$)
+              <input name="card" type="number" min="0" step="0.01" required />
+            </label>
+          </div>
+          <div class="subsection-grid two-columns">
+            <label>
+              Saida diaria (R$)
+              <input name="dailyCost" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              Custos extras (R$)
+              <input name="extraCost" type="number" min="0" step="0.01" required />
+            </label>
+          </div>
+          <label>
+            Descricao dos custos extras
+            <textarea name="extraDescription" rows="3" required></textarea>
+          </label>
+          <label>
+            Foto do relatorio da maquininha
+            <input name="machinePhoto" type="file" accept="image/*" />
+          </label>
+          <button class="btn btn-primary btn-xl" type="submit">Salvar fechamento de caixa</button>
+        </form>
+      </div>
+
+      <div class="panel checkout-panel">
+        <div class="panel-header">
+          <p class="section-tag">Encerramento</p>
+          <h2>Check-out da barraca</h2>
+        </div>
+        <p class="hint">O fechamento so deve ser registrado apos preencher o caixa e anexar a foto da maquininha.</p>
+        <button id="end-shift" class="btn btn-danger btn-kiosk" type="button">Registrar horario de fechamento</button>
+      </div>
+    </template>
+
+    <template id="admin-template">
+      <section class="admin-overlay">
+        <div class="admin-panel panel">
+          <div class="panel-header">
+            <div>
+              <p class="section-tag">Painel ADM</p>
+              <h2>Visao consolidada</h2>
+            </div>
+            <button id="close-admin" class="btn btn-ghost" type="button">Fechar</button>
+          </div>
+          <div class="stats-grid">
+            <div class="metric-card">
+              <span>Vendas brutas</span>
+              <strong id="metric-sales">R$ 0,00</strong>
+            </div>
+            <div class="metric-card">
+              <span>Barracas abertas hoje</span>
+              <strong id="metric-openings">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Pedidos/Faltas</span>
+              <strong id="metric-incidents">0</strong>
+            </div>
+            <div class="metric-card">
+              <span>Liquido de caixa</span>
+              <strong id="metric-net">R$ 0,00</strong>
+            </div>
+          </div>
+          <div class="admin-sections">
+            <section>
+              <div class="panel-header">
+                <div>
+                  <h3>Filtro administrativo</h3>
+                  <p class="hint">Escolha uma unidade especifica ou visualize toda a empresa.</p>
+                </div>
+              </div>
+              <label class="filter-field">
+                Unidade
+                <select id="admin-unit-filter"></select>
+              </label>
+            </section>
+            <section>
+              <div class="panel-header">
+                <div>
+                  <h3>Relatorio financeiro em PDF</h3>
+                  <p class="hint">Gere relatorios diarios ou consolidados por semana, mes ou ano.</p>
+                </div>
+              </div>
+              <div class="report-controls">
+                <label class="filter-field">
+                  Unidade do relatorio
+                  <select id="report-unit-filter"></select>
+                </label>
+                <label class="filter-field">
+                  Periodo
+                  <select id="report-period-filter">
+                    <option value="day">Dia</option>
+                    <option value="week">Semana</option>
+                    <option value="month">Mes</option>
+                    <option value="year">Ano</option>
+                  </select>
+                </label>
+                <label class="filter-field">
+                  Data base
+                  <input id="report-date-input" type="date" />
+                </label>
+                <button id="export-report-button" class="btn btn-primary" type="button">
+                  Baixar relatorio em PDF
+                </button>
+              </div>
+            </section>
+            <section>
+              <h3>Controle de ponto</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Unidade</th>
+                      <th>Abertura</th>
+                      <th>Fechamento</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="timekeeping-table"></tbody>
+                </table>
+              </div>
+            </section>
+            <section>
+              <h3>Financeiro completo do caixa</h3>
+              <div class="stats-grid finance-grid">
+                <div class="metric-card">
+                  <span>Entrada em dinheiro</span>
+                  <strong id="metric-cash">R$ 0,00</strong>
+                </div>
+                <div class="metric-card">
+                  <span>Entrada em cartao</span>
+                  <strong id="metric-card">R$ 0,00</strong>
+                </div>
+                <div class="metric-card">
+                  <span>Diarias pagas</span>
+                  <strong id="metric-daily-cost">R$ 0,00</strong>
+                </div>
+                <div class="metric-card">
+                  <span>Custos extras</span>
+                  <strong id="metric-extra-cost">R$ 0,00</strong>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Unidade</th>
+                      <th>Dinheiro</th>
+                      <th>Cartao</th>
+                      <th>Diaria</th>
+                      <th>Extras</th>
+                      <th>Liquido</th>
+                    </tr>
+                  </thead>
+                  <tbody id="financial-table"></tbody>
+                </table>
+              </div>
+            </section>
+            <section>
+              <h3>Gestao de insumos</h3>
+              <div id="admin-incidents" class="list-board"></div>
+            </section>
+            <section>
+              <h3>Auditoria de imagem</h3>
+              <div id="photo-gallery" class="gallery-grid"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <template id="locked-template">
+      <div class="panel muted-panel">
+        <div class="panel-header">
+          <p class="section-tag">Bloqueado</p>
+          <h2>Fluxo operacional aguardando ponto</h2>
+        </div>
+        <p>
+          Registre primeiro o start de ponto para liberar estoque, ocorrencias e fechamento.
+        </p>
+      </div>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>

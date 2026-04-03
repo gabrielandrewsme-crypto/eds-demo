@@ -1,0 +1,17 @@
+{
+  "name": "EDS System",
+  "short_name": "EDS",
+  "description": "Controle operacional e financeiro das barracas da Explosao de Sabor.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#1f6f63",
+  "icons": [
+    {
+      "src": "./eds.png",
+      "sizes": "2000x2000",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
