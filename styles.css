@@ -29,6 +29,24 @@ body {
     linear-gradient(180deg, #f8f9fb 0%, #f1f3f6 100%);
 }
 
+body.auth-shell .sidebar,
+body.auth-shell .topbar {
+  display: none;
+}
+
+body.auth-shell .shell-layout {
+  grid-template-columns: 1fr;
+}
+
+body.auth-shell .workspace {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -262,6 +280,16 @@ td {
 .login-actions {
   display: grid;
   gap: 14px;
+}
+
+.auth-role-switch {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .mini-metrics {

@@ -22,6 +22,7 @@ const session = {
   role: "operator",
 };
 const state = {
+  authView: "operator",
   backendReady: false,
   backendError: "",
   loadingText: "",
@@ -235,6 +236,12 @@ function getReportRecords(unit, period, baseDateKey) {
 
 function render() {
   app.innerHTML = "";
+  document.body.classList.toggle("auth-shell", !session.authenticated);
+
+  if (!session.authenticated) {
+    renderLogin();
+    return;
+  }
 
   if (state.loadingText) {
     renderLoading();
@@ -243,11 +250,6 @@ function render() {
 
   if (state.backendError) {
     renderBackendError();
-    return;
-  }
-
-  if (!session.authenticated) {
-    renderLogin();
     return;
   }
 
@@ -298,6 +300,34 @@ function renderBackendError() {
 function renderLogin() {
   app.appendChild(cloneTemplate("login-template"));
   const form = document.getElementById("login-form");
+  const operatorButton = document.getElementById("role-operator-button");
+  const adminButton = document.getElementById("role-admin-button");
+  const adminDirectAccess = document.getElementById("admin-direct-access");
+  const loginHint = document.getElementById("login-hint");
+
+  function syncAuthMode() {
+    const operatorMode = state.authView === "operator";
+    form.classList.toggle("hidden", !operatorMode);
+    adminDirectAccess.classList.toggle("hidden", operatorMode);
+    operatorButton.className = `btn ${operatorMode ? "btn-primary" : "btn-secondary"}`;
+    adminButton.className = `btn ${operatorMode ? "btn-secondary" : "btn-primary"}`;
+    loginHint.textContent = operatorMode
+      ? "Selecione Funcionario para logar e depois escolher a barraca do aparelho."
+      : "Selecione ADM para entrar direto no painel administrativo.";
+  }
+
+  operatorButton.addEventListener("click", () => {
+    state.authView = "operator";
+    syncAuthMode();
+  });
+
+  adminButton.addEventListener("click", () => {
+    state.authView = "admin";
+    syncAuthMode();
+  });
+
+  syncAuthMode();
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
@@ -327,6 +357,15 @@ function renderLogin() {
       await refreshAdminRecords();
     });
   });
+
+  if (state.backendError) {
+    const warning = document.createElement("div");
+    warning.className = "empty-state";
+    warning.innerHTML = `<strong>Backend pendente</strong><p>${escapeHtml(
+      state.backendError
+    )}</p>`;
+    document.querySelector(".intro-panel")?.appendChild(warning);
+  }
 }
 
 function renderUnitSelection() {
@@ -1008,8 +1047,13 @@ async function uploadMachinePhoto(file, unit, dateKey) {
 }
 
 if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  window.addEventListener("load", async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+    if ("caches" in window) {
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+    }
   });
 }
 

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="shell-layout">
+    <div id="shell-layout" class="shell-layout">
       <aside class="sidebar">
         <div class="brand-mark">
           <img class="brand-avatar" src="/eds.png" alt="Logo EDS System" />
@@ -81,6 +81,10 @@
               <h2>Login unificado</h2>
             </div>
           </div>
+          <div class="auth-role-switch">
+            <button id="role-operator-button" class="btn btn-primary" type="button">Funcionario</button>
+            <button id="role-admin-button" class="btn btn-secondary" type="button">ADM</button>
+          </div>
           <form id="login-form" class="form-grid">
             <label>
               Usuario
@@ -92,12 +96,12 @@
             </label>
             <button class="btn btn-primary btn-xl" type="submit">Entrar no sistema</button>
           </form>
-          <div class="login-actions">
+          <div id="admin-direct-access" class="login-actions hidden">
             <button id="login-admin-button" class="btn btn-secondary btn-xl" type="button">
               Entrar no Painel ADM
             </button>
           </div>
-          <p class="hint">Acesso operacional por unidade e acesso administrativo direto na mesma tela.</p>
+          <p id="login-hint" class="hint">Selecione `Funcionario` para logar e depois escolher a barraca do aparelho.</p>
         </section>
       </section>
     </template>
