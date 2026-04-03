@@ -428,6 +428,13 @@ textarea {
   border: 1px solid var(--line);
 }
 
+.btn-inline-danger {
+  background: #fff1f2;
+  color: var(--danger);
+  border: 1px solid #fecdd3;
+  padding: 8px 12px;
+}
+
 .btn-xl {
   min-height: 52px;
 }

@@ -29,9 +29,11 @@ alter table public.incidents enable row level security;
 drop policy if exists "demo shifts select" on public.shifts;
 drop policy if exists "demo shifts insert" on public.shifts;
 drop policy if exists "demo shifts update" on public.shifts;
+drop policy if exists "demo shifts delete" on public.shifts;
 drop policy if exists "demo incidents select" on public.incidents;
 drop policy if exists "demo incidents insert" on public.incidents;
 drop policy if exists "demo incidents update" on public.incidents;
+drop policy if exists "demo incidents delete" on public.incidents;
 
 create policy "demo shifts select"
 on public.shifts for select
@@ -49,6 +51,11 @@ to anon, authenticated
 using (true)
 with check (true);
 
+create policy "demo shifts delete"
+on public.shifts for delete
+to anon, authenticated
+using (true);
+
 create policy "demo incidents select"
 on public.incidents for select
 to anon, authenticated
@@ -65,12 +72,18 @@ to anon, authenticated
 using (true)
 with check (true);
 
+create policy "demo incidents delete"
+on public.incidents for delete
+to anon, authenticated
+using (true);
+
 insert into storage.buckets (id, name, public)
 values ('machine-reports', 'machine-reports', true)
 on conflict (id) do nothing;
 
 drop policy if exists "demo machine reports select" on storage.objects;
 drop policy if exists "demo machine reports insert" on storage.objects;
+drop policy if exists "demo machine reports delete" on storage.objects;
 
 create policy "demo machine reports select"
 on storage.objects for select
@@ -81,3 +94,8 @@ create policy "demo machine reports insert"
 on storage.objects for insert
 to anon, authenticated
 with check (bucket_id = 'machine-reports');
+
+create policy "demo machine reports delete"
+on storage.objects for delete
+to anon, authenticated
+using (bucket_id = 'machine-reports');

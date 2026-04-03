@@ -704,7 +704,7 @@ function paintAdminPanel(initialFilter, inApp) {
 
     tableBody.innerHTML = "";
     if (!records.length) {
-      tableBody.innerHTML = '<tr><td colspan="5">Nenhum registro encontrado.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="6">Nenhum registro encontrado.</td></tr>';
     } else {
       records.forEach((record) => {
         const status = record.endShift ? "Fechada" : record.startShift ? "Aberta" : "Sem ponto";
@@ -715,8 +715,37 @@ function paintAdminPanel(initialFilter, inApp) {
           <td>${escapeHtml(formatDateTime(record.startShift))}</td>
           <td>${escapeHtml(formatDateTime(record.endShift))}</td>
           <td>${escapeHtml(status)}</td>
+          <td><button class="btn btn-inline-danger" type="button" data-delete-shift-id="${escapeHtml(
+            record.id || ""
+          )}">Apagar</button></td>
         `;
         tableBody.appendChild(row);
+      });
+
+      tableBody.querySelectorAll("[data-delete-shift-id]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const shiftId = button.getAttribute("data-delete-shift-id");
+          if (!shiftId) return;
+          const confirmed = window.confirm(
+            "Tem certeza que deseja apagar este registro? Esta acao remove ponto, ocorrencias, fechamento e foto associada."
+          );
+          if (!confirmed) return;
+
+          await runWithLoading("Apagando registro", async () => {
+            await deleteShiftRecord(shiftId);
+            await refreshAdminRecords();
+            if (session.currentUnit) {
+              await refreshCurrentRecord();
+            }
+          });
+
+          if (document.querySelector(".admin-overlay")) {
+            document.querySelector(".admin-overlay")?.remove();
+            renderAdminPanel(filterSelect.value);
+          } else {
+            render();
+          }
+        });
       });
     }
 
@@ -1044,6 +1073,27 @@ async function uploadMachinePhoto(file, unit, dateKey) {
     path,
     url: data.publicUrl,
   };
+}
+
+async function deleteShiftRecord(shiftId) {
+  const target = state.adminRecords.find((record) => record.id === shiftId);
+  if (!target) {
+    throw new Error("Registro nao encontrado para exclusao.");
+  }
+
+  const machinePhotoPath = target.closing?.machinePhotoPath;
+  if (machinePhotoPath) {
+    const { error: storageError } = await supabase.storage
+      .from(MACHINE_REPORTS_BUCKET)
+      .remove([machinePhotoPath]);
+
+    if (storageError) {
+      throw new Error(storageError.message);
+    }
+  }
+
+  const { error } = await supabase.from("shifts").delete().eq("id", shiftId);
+  if (error) throw new Error(error.message);
 }
 
 if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
